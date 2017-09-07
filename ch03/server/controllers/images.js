@@ -1,15 +1,15 @@
-// Import modules
+// 모듈 불러오기
 var fs = require('fs');
 var mime = require('mime');
-// get gravatar icon from email
+// 이메일에서 Gravatar 아이콘 얻기
 var gravatar = require('gravatar');
 var Images = require('../models/images');
-// set image file types
+// 이미지 파일 형식 설정
 var IMAGE_TYPES = ['image/jpeg','image/jpg','image/png'];
 
 
 
-// Show image gallery
+// 이미지 갤러리 보여주기
 exports.show = function(req, res) {
 
     Images.find().sort('-created').populate('user', 'local.email').exec(function(error, images) {
@@ -18,7 +18,7 @@ exports.show = function(req, res) {
 		message: error
 	    });
 	}
-	// Render gallery
+	// 갤러리 렌더링
 	res.render('images-gallery', {
 	    title: 'Images Gallery',
 	    images: images,
@@ -29,7 +29,7 @@ exports.show = function(req, res) {
 
 
 
-// Image upload
+// 이미지 업로드
 exports.uploadImage = function(req, res) {
     var src;
     var dest;
@@ -37,23 +37,23 @@ exports.uploadImage = function(req, res) {
     var targetName;
     var tempPath = req.file.path;
     console.log(req.file);
-    // get the mime type of the file
+    // 파일의 MIME형식 얻기
     var type = mime.lookup(req.file.mimetype);
-    // get file extension
+    // 파일 확장자 얻기
     var extension = req.file.path.split(/[. ]+/).pop();
-    // check support file types
+    // 지원하는 파일 형식인지 확인
     if (IMAGE_TYPES.indexOf(type) == -1) {
 	return res.status(415).send('Supported image formats: jpeg, jpg, jpe, png.');
     }
-    // Set new path to images
+    // 이미지의 새 경로 설정
     targetPath = './public/images/' + req.file.originalname;
-    // using read stream API to read file
+    // 파일 읽기에 읽기 스트림 API 사용
     src = fs.createReadStream(tempPath);
-    // using a write stream API to write file
+    // 파일 쓰기에 쓰기 스트림 API 사용
     dest = fs.createWriteStream(targetPath);
     src.pipe(dest);
 
-    // Show error
+    // 에러 출력
     src.on('error', function(err) {
 	if (err) {
 	    return res.status(500).send({
@@ -61,15 +61,15 @@ exports.uploadImage = function(req, res) {
 	    });
 	}
     });
-    // Show file process
+    // 파일 프로세스 저장
     src.on('end', function() {
-	// create a new instance of the Images model with request body
+	// request body로 새 이미지 모델 생성
 	var image = new Images(req.body);
-	// Set the image file name
+	// 이미지 파일 이름 설정
 	image.imageName = req.file.originalname;
-	// Set current user (id)
+	// 현재 사용자 (id) 설정
 	image.user = req.user;
-	// save the data received
+	// 수신 데이터 저장
 	image.save(function(error) {
 	    if (error) {
 		return res.status(400).send({
@@ -77,12 +77,12 @@ exports.uploadImage = function(req, res) {
 		});
 	    }
 	});
-	// remove from temp folder
+	// temp 폴더에서 삭제
 	fs.unlink(tempPath, function(err) {
 	    if (err) {
 		return res.status(500).send('Woh, something bad happened here');
 	    }
-	    // Redirect to gallery's page
+	    // 갤러리 페이지로 리다이렉트
 	    res.redirect('images-gallery');
 	});
     });
@@ -90,7 +90,7 @@ exports.uploadImage = function(req, res) {
 
 
 
-// Images authorization middleware
+// 이미지 인증 미들웨어
 exports.hasAuthorization = function(req, res, next) {
     if (req.isAuthenticated())
 	return next();

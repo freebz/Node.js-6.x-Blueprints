@@ -1,4 +1,4 @@
-// Import basic modules
+// 기본 모듈 불러오기
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -6,32 +6,32 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-// import multer
+// 멀터 불러오기
 var multer = require('multer');
 var upload = multer({ dest:'./public/uploads/', limits: {fileSize: 10000000, files:1} });
 
 
 
-// Import home controller
+// 홈 컨트롤러 불러오기
 var index = require('./server/controllers/index');
-// Import login controller
+// 로그인 컨트롤러 불러오기
 var auth = require('./server/controllers/auth');
-// Import comments controller
+// 코멘트 컨트롤러 불러오기
 var comments = require('./server/controllers/comments');
-// Import videos controller
+// 비디오 컨트롤러 불러오기
 var videos = require('./server/controllers/videos');
-// Import images controller
+// 이미지 컨트롤러 불러오기
 var images = require('./server/controllers/images');
 
 
 
-// ODM with MOngoose
+// 몽구스 ODM
 var mongoose = require('mongoose');
 
-// Modules to store session
+// 세션 저장용 모듈
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-// Import Passport and Warning flash modules
+// 패스포트와 경고 플래스 메시지 모듈 불러오기
 var passport = require('passport');
 var flash = require('connect-flash');
 
@@ -40,19 +40,19 @@ var app = express();
 
 
 
-// view engine setup
+// 뷰 엔진 설정
 app.set('views', path.join(__dirname, 'server/views/pages'));
 app.set('view engine', 'ejs');
 
-// Database configuration
+// 데이터베이스 설정
 var config = require('./server/config/config.js');
-// connect to our database
+// 데이터베이스 연결
 mongoose.connect(config.url);
-// Check if MongoDB is running
+// 몽고DB가 실행 중인지 확인
 mongoose.connection.on('error', function() {
     console.error('MOngoDB Connection Error. Make sure MongoDB is running.');
 });
-// Passport configuration
+// 패스포트 설정
 require('./server/config/passport')(passport);
 
 
@@ -67,77 +67,77 @@ app.use(require('node-sass-middleware')({
     indentedSyntax: true,
     sourceMap: true
 }));
-// Setup public directory
+// public 디렉토리 설정
 app.use(express.static(path.join(__dirname, 'public')));
 
-// required for passport
-// secret for session
+// 패스포트용
+// 세션용 비밀키
 app.use(session({
     secret: 'sometextgohrere',
     saveUninitialized: true,
     resave: true,
-    // store session on MongoDB using express-session + connect mongo
+    // express-session과 connect-mongo를 이용해 몽고DB에 세션 저장
     store: new MongoStore({
 	url: config.url,
 	collection: 'sessions'
     })
 }));
 
-// Init passport authentication
+// 패스포트 인증 초기화
 app.use(passport.initialize());
-// persistent login sessions
+// 영구적인 로그인 세션
 app.use(passport.session());
-// flash messages
+// 플래시 메시지
 app.use(flash());
 
 
 
-// Application Routes
-// Index Route
+// 애플리케이션 라우트들
+// 인덱스 라우트
 app.get('/', index.show);
 app.get('/login', auth.signin);
 app.post('/login', passport.authenticate('local-login', {
-    // Success go to Profile Page / Fail go to login page
+    // 성공하면 프로필 페이지로, 실패하면 로그인 페이지로
     successRedirect : '/profile',
     failureRedirect : '/login',
     failureFlash : true
 }));
 app.get('/signup', auth.signup);
 app.post('/signup', passport.authenticate('local-signup', {
-    // Success go to Profile Page / Fail go to Signup page
+    // 성공하면 프로필 페이지로, 실패하면 가입 페이지로
     successRedirect : '/profile',
     failureRedirect : '/signup',
     failureFlash : true
 }));
 app.get('/profile', auth.isLoggedIn, auth.profile);
-// Logout Page
+// 로그아웃 페이지
 app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
 });
 
-// Setup routes for comments
+// 코멘트 라우트 설정
 app.get('/comments', comments.hasAuthorization, comments.list);
 app.post('/comments', comments.hasAuthorization, comments.create);
 
-// Setup routes for videos
+// 비디오 라우트 설정
 app.get('/videos', videos.hasAuthorization, videos.show);
 app.post('/videos', videos.hasAuthorization, upload.single('video'), videos.uploadVideo);
 
-// Setup routes for images
+// 이미지 라우트 설정
 app.post('/images', images.hasAuthorization, upload.single('image'), images.uploadImage);
 app.get('/images-gallery', images.hasAuthorization, images.show);
 
 
 
-// catch 404 and forward to error handler
+// 404 에러가 발생하면 에러 핸들러에 전송
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
-// development error handler
-// will print stacktrace
+// 개발자용 에러 핸들러는
+// 스택트레이스(stacktrace)를 출력한다.
 if (app.get('env') === 'develpment') {
     app.use(function(err, req, res, next) {
 	res.status(err.status || 500);
@@ -148,8 +148,8 @@ if (app.get('env') === 'develpment') {
     });
 }
 
-// production error handler
-// no stacktraces leaked to user
+// 실무 환경의 에러 핸들러는
+// 사용자에게 스택트레이스를 보여주지 않는다.
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
