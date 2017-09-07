@@ -1,8 +1,8 @@
-// Index controller
+// 인덱스 컨트롤러
 
-// List Sample Bands
+// 샘플 Band 목록
 exports.show = function(req, res) {
-    // List all comments and sort by Date
+    // Band 전체 목록을 날짜별로 정렬하기
     var topBands = [
 	{
 	    name: 'Motohead',
@@ -20,6 +20,7 @@ exports.show = function(req, res) {
 	    album: 'http://s2.vagalume.com/ozzy-osbourne/discografia/diary-of-a-madman-W320.jpg', year:'1981',
 	}
     ];
+    // 인덱스 콘텐츠 보여주기
     res.render('index', {
 	title: 'The best albums of the eighties',
 	callToAction: 'Please be welcome, click the button below and register your favorite album.',

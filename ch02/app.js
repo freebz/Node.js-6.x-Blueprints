@@ -6,17 +6,17 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
 
-// Inject index controller
+// 인덱스 컨트롤러 삽입
 var index = require('./controllers/index');
-// Inject band controller
+// Band 컨트롤러 삽입
 var bands = require('./controllers/band');
-// Inject user controller
+// User 컨트롤러 삽입
 var users = require('./controllers/user');
 
 
 var app = express();
 
-// view engine setup
+// 뷰 엔진 설정
 app.set('views', path.join(__dirname, 'views/pages'));
 
 var swig = new swig.Swig();
@@ -33,17 +33,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Defining routes and controllers functions
 app.get('/', index.show);
-// Defining route to list and post
+// Band 목록과 생성에 대한 라우트 정의하기
 app.get('/bands', bands.list);
-// Get band by ID
+// id로 Band 얻기
 app.get('/band/:id', bands.byId);
-// Create band
+// Band 만들기
 app.post('/bands', bands.create);
-// Update
+// 수정하기
 app.put('/band/:id', bands.update);
-// Delete by id
+// id로 삭제하기
 app.delete('/band/:id', bands.delete);
-// Defining route to list and post users
+// User 목록과 생성에 대한 라우트 정의하기
 app.get('/users', users.list);
 app.post('/users', users.create);
 

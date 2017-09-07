@@ -1,9 +1,9 @@
 var models = require('../models/index');
 var User = require('../models/user');
 
-// Create Users
+// User 만들기
 exports.create = function(req, res) {
-    // create a new instance of the Users model with request body
+    // request body를 가진 User 모델 만들기
     models.User.create({
 	name: req.body.name,
 	email: req.body.email
@@ -11,9 +11,10 @@ exports.create = function(req, res) {
 	res.json(user);
     });
 };
-// List Users
+
+// User 목록
 exports.list = function(req, res) {
-    // List all users
+    // 전체 User 목록
     models.User.findAll({}).then(function(users) {
 	res.json(users);
     });

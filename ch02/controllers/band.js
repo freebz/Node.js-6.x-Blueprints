@@ -1,25 +1,25 @@
 var models = require('../models/index');
 var Band = require('../models/band');
 
-// Create Band
+// Band 만들기
 exports.create = function(req, res) {
-    // create a new instance of the Bands model with request body
+    // request body를 가진 Band 모델 만들기
     models.Band.create(req.body).then(function(band) {
 	//res.json(band);
 	res.redirect('/bands');
     });
 };
 
-// List Bands
+// Band 목록
 exports.list = function(req, res) {
-    // List all bands and sort by Date
+    // Band 전체 목록을 날짜별로 정렬하기
     models.Band.findAll({
-	// Order: lastest created
+	// 정렬: 최근 생성된 순으로
 	//order: 'createdAt DESC'
 	order: [['createdAt', 'DESC']]
     }).then(function(bands) {
 	//res.json(bands);
-	// Render result
+	// 결과 렌더링하기
 	res.render('band-list', {
 	    title: 'List bands',
 	    bands: bands
@@ -27,7 +27,7 @@ exports.list = function(req, res) {
     });
 };
 
-// Get by band id
+// Band id로 얻기
 exports.byId = function(req, res) {
     models.Band.find({
 	where: {
@@ -38,7 +38,7 @@ exports.byId = function(req, res) {
     });
 }
 
-// Update by id
+// id로 업데이트하기
 exports.update = function(req, res) {
     models.Band.find({
 	where: {
@@ -59,7 +59,7 @@ exports.update = function(req, res) {
     });
 }
 
-// Delete by id
+// id로 삭제하기
 exports.delete = function (req, res) {
     models.Band.destroy({
 	where: {
