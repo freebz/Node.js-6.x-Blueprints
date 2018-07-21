@@ -32,6 +32,9 @@
 	       data-caption="{{itme.description}}"></img>
 	  #}
 	  <p class="light">{{ item.description }}</p>
+	  <a href="{{ cloudinary.url(item.image.url) }}" target="_blank">
+	  Link to original image
+	  </a>
 	</div>
       </div>
     {% endfor %}
